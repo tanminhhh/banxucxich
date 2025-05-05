@@ -82,8 +82,9 @@
   }
   #open-history-btn,
   #open-expense-history-btn,
-  #open-bank-code-btn {
-    background-color: #2a7ae2;
+  #open-bank-code-btn,
+  #reset-data-btn {
+    background-color: #d95d39;
     color: white;
     border-radius: 10px;
     font-weight: 700;
@@ -97,8 +98,9 @@
   }
   #open-history-btn:hover,
   #open-expense-history-btn:hover,
-  #open-bank-code-btn:hover {
-    background-color: #1f5bb8;
+  #open-bank-code-btn:hover,
+  #reset-data-btn:hover {
+    background-color: #b44a2a;
   }
   .section {
     background: #fff2e8;
@@ -164,16 +166,19 @@
     text-align: center;
   }
   .modal-close-btn {
-    position: absolute;
-    right: 12px;
-    top: 12px;
+    position: relative;
+    display: block;
+    margin: 20px auto 0;
     background: none;
-    font-size: 24px;
-    border: none;
+    font-size: 16px;
+    border: 2px solid #d95d39;
+    border-radius: 4px;
     color: #d95d39;
     cursor: pointer;
     font-weight: 700;
     user-select: none;
+    padding: 8px 16px;
+    width: 100px;
   }
   #history-list,
   #expense-history-list {
@@ -250,6 +255,7 @@
   <button id="open-history-btn" aria-haspopup="dialog" aria-controls="history-modal-content" aria-expanded="false" aria-label="Mở lịch sử bán hàng">Lịch sử bán hàng</button>
   <button id="open-expense-history-btn" aria-haspopup="dialog" aria-controls="expense-history-modal-content" aria-expanded="false" aria-label="Mở lịch sử chi tiêu khác">Lịch sử chi tiêu</button>
   <button id="open-bank-code-btn" aria-haspopup="dialog" aria-controls="bank-code-modal-content" aria-expanded="false" aria-label="Hiển thị mã ngân hàng">Mã Ngân Hàng</button>
+  <button id="reset-data-btn" aria-label="Xóa toàn bộ dữ liệu">Reset Dữ Liệu</button>
 </div>
 
 <div class="section" id="price-section">
@@ -303,31 +309,31 @@
 <!-- Modal for sales history -->
 <div id="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-modal-title" tabindex="-1">
   <div id="history-modal-content">
-    <button class="modal-close-btn" id="history-modal-close" aria-label="Đóng cửa sổ lịch sử bán hàng">&times;</button>
     <h2 id="history-modal-title">Lịch sử bán hàng theo ngày</h2>
     <div id="history-list" aria-live="polite">
       <!-- Daily grouped sales transactions will appear here -->
     </div>
+    <button class="modal-close-btn" id="history-modal-close" aria-label="Đóng cửa sổ lịch sử bán hàng">Đóng</button>
   </div>
 </div>
 
 <!-- Modal for expense history -->
 <div id="expense-history-modal" role="dialog" aria-modal="true" aria-labelledby="expense-history-modal-title" tabindex="-1">
   <div id="expense-history-modal-content">
-    <button class="modal-close-btn" id="expense-history-modal-close" aria-label="Đóng cửa sổ lịch sử chi tiêu">&times;</button>
     <h2 id="expense-history-modal-title">Lịch sử chi tiêu khác</h2>
     <div id="expense-history-list" aria-live="polite">
       <!-- Expense entries here -->
     </div>
+    <button class="modal-close-btn" id="expense-history-modal-close" aria-label="Đóng cửa sổ lịch sử chi tiêu">Đóng</button>
   </div>
 </div>
 
 <!-- Modal for Bank Code -->
 <div id="bank-code-modal" role="dialog" aria-modal="true" aria-labelledby="bank-code-modal-title" tabindex="-1">
   <div id="bank-code-modal-content">
-    <button class="modal-close-btn" id="bank-code-modal-close" aria-label="Đóng cửa sổ mã ngân hàng">&times;</button>
     <h2 id="bank-code-modal-title">Mã Ngân Hàng</h2>
     <img id="bank-code-img" src="https://i.imgur.com/YuByekc.jpeg" alt="Mã ngân hàng TanMinh Dev_" />
+    <button class="modal-close-btn" id="bank-code-modal-close" aria-label="Đóng cửa sổ mã ngân hàng">Đóng</button>
   </div>
 </div>
 
@@ -771,8 +777,24 @@
 
     init();
 
+    // Reset data button
+    document.getElementById('reset-data-btn').addEventListener('click', () => {
+      if(confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu? Hành động này không thể hoàn tác.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        data = {
+          pricePerStick: 2000,
+          costPerStick: 1500,
+          stock: 0,
+          revenue: 0,
+          profit: 0,
+          transactions: [],
+          expenses: []
+        };
+        updateUI();
+      }
+    });
+
   })();
 </script>
 </body>
 </html>
-
