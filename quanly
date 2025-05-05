@@ -1,1 +1,778 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>TanMinh Dev_</title>
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff8f0;
+    color: #4a3c31;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 400px;
+    margin: auto;
+    padding: 15px;
+    user-select: none;
+    position: relative;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 12px;
+    color: #d95d39;
+    text-shadow: 1px 1px 4px #f2a65a;
+  }
+  h2 {
+    margin-top: 20px;
+    border-bottom: 3px solid #d95d39;
+    padding-bottom: 4px;
+    color: #d95d39;
+  }
+  label {
+    display: block;
+    margin: 8px 0 2px;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #d95d39;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    color: #4a3c31;
+  }
+  input[type="number"]:focus, input[type="text"]:focus {
+    border-color: #f2a65a;
+    outline: none;
+  }
+  button {
+    margin-top: 18px;
+    background-color: #d95d39;
+    border: none;
+    color: white;
+    padding: 14px 0;
+    width: 100%;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    user-select: none;
+  }
+  button:hover,
+  button:focus {
+    background-color: #b44a2a;
+  }
+  #top-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  #open-history-btn,
+  #open-expense-history-btn,
+  #open-bank-code-btn {
+    background-color: #2a7ae2;
+    color: white;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px 0;
+    cursor: pointer;
+    border: none;
+    user-select: none;
+    flex: 1;
+    transition: background-color 0.3s ease;
+  }
+  #open-history-btn:hover,
+  #open-expense-history-btn:hover,
+  #open-bank-code-btn:hover {
+    background-color: #1f5bb8;
+  }
+  .section {
+    background: #fff2e8;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgb(217 93 57 / 0.4);
+    margin-bottom: 30px;
+  }
+  .status {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 10px;
+    color: #4a3c31;
+    text-align: center;
+  }
+  .numbers {
+    font-size: 22px;
+    font-weight: 900;
+    color: #d95d39;
+    margin-top: 5px;
+    text-align: center;
+    user-select: text;
+  }
+  .small-text {
+    text-align: center;
+    font-size: 14px;
+    color: #8f7a68;
+    margin-top: 8px;
+  }
+
+  /* Modal styling */
+  #history-modal,
+  #expense-history-modal,
+  #bank-code-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+  }
+  #history-modal-content,
+  #expense-history-modal-content,
+  #bank-code-modal-content {
+    background-color: #fff8f0;
+    margin: 40px auto;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 95%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  #history-modal-content h2,
+  #expense-history-modal-content h2,
+  #bank-code-modal-content h2 {
+    margin-top: 0;
+    color: #d95d39;
+    text-align: center;
+  }
+  .modal-close-btn {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    background: none;
+    font-size: 24px;
+    border: none;
+    color: #d95d39;
+    cursor: pointer;
+    font-weight: 700;
+    user-select: none;
+  }
+  #history-list,
+  #expense-history-list {
+    margin-top: 12px;
+  }
+  #bank-code-img {
+    display: block;
+    max-width: 100%;
+    margin: 10px auto 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.15);
+  }
+
+  .daily-group {
+    border: 1px solid #d95d39;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    background: #fef6f0;
+    padding: 10px 14px;
+  }
+  .daily-group-header {
+    font-weight: 700;
+    font-size: 16px;
+    color: #b54125;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #d95d39;
+    padding-bottom: 4px;
+  }
+  .daily-summary {
+    color: #a94528;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .daily-transaction {
+    margin-left: 12px;
+    margin-bottom: 4px;
+  }
+  .daily-transaction-time {
+    font-size: 12px;
+    color: #825029;
+    margin-left: 8px;
+  }
+
+  @media (max-width: 420px) {
+    body {
+      max-width: 100%;
+      padding: 12px;
+    }
+    label {
+      font-size: 14px;
+    }
+    input[type=number], input[type=text] {
+      font-size: 14px;
+      padding: 8px 10px;
+    }
+    button,
+    #open-history-btn,
+    #open-expense-history-btn,
+    #open-bank-code-btn {
+      font-size: 16px;
+      padding: 10px 0;
+    }
+    .numbers {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+<h1>TanMinh Dev_</h1>
+
+<div id="top-buttons" role="region" aria-label="Nút mở các cửa sổ lịch sử và mã ngân hàng">
+  <button id="open-history-btn" aria-haspopup="dialog" aria-controls="history-modal-content" aria-expanded="false" aria-label="Mở lịch sử bán hàng">Lịch sử bán hàng</button>
+  <button id="open-expense-history-btn" aria-haspopup="dialog" aria-controls="expense-history-modal-content" aria-expanded="false" aria-label="Mở lịch sử chi tiêu khác">Lịch sử chi tiêu</button>
+  <button id="open-bank-code-btn" aria-haspopup="dialog" aria-controls="bank-code-modal-content" aria-expanded="false" aria-label="Hiển thị mã ngân hàng">Mã Ngân Hàng</button>
+</div>
+
+<div class="section" id="price-section">
+  <h2>Giá bán và giá vốn / cây</h2>
+  <label for="price-per-stick">Giá bán 1 cây (VNĐ)</label>
+  <input type="number" id="price-per-stick" placeholder="Ví dụ: 2000" min="0" step="100" required />
+  <label for="cost-per-stick" style="margin-top:12px;">Giá vốn 1 cây (VNĐ)</label>
+  <input type="number" id="cost-per-stick" placeholder="Ví dụ: 1500" min="0" step="100" required />
+</div>
+
+<div class="section" id="purchase-section">
+  <h2>Nhập hàng (bổ sung tồn kho)</h2>
+  <label for="purchase-quantity">Số lượng cây xúc xích nhập về</label>
+  <input type="number" id="purchase-quantity" placeholder="Nhập số lượng" min="1" step="1" />
+  <button id="btn-purchase">Nhập hàng</button>
+</div>
+
+<div class="section" id="sale-section">
+  <h2>Bán hàng</h2>
+  <label for="sale-quantity">Số lượng cây xúc xích bán</label>
+  <input type="number" id="sale-quantity" placeholder="Nhập số lượng" min="0" step="1" />
+  <label for="gift-quantity" style="margin-top: 12px;">Số lượng cây xúc xích tặng (nếu có)</label>
+  <input type="number" id="gift-quantity" placeholder="Nhập số lượng tặng" min="0" step="1" />
+  <button id="btn-sale">Xác nhận bán & tặng</button>
+</div>
+
+<div class="section" id="expense-section">
+  <h2>Chi tiêu khác</h2>
+  <label for="expense-amount">Số tiền chi tiêu (VNĐ)</label>
+  <input type="number" id="expense-amount" placeholder="Nhập số tiền" min="1" step="100" />
+  <label for="expense-desc" style="margin-top:8px;">Mô tả (tùy chọn)</label>
+  <input type="text" id="expense-desc" placeholder="Ví dụ: phí vận chuyển, điện nước..." maxlength="100" />
+  <button id="btn-add-expense">Thêm chi tiêu</button>
+</div>
+
+<div class="section" id="status-section">
+  <h2>Trạng thái hàng tồn, doanh thu và chi tiêu</h2>
+  <div class="status">Số cây xúc xích còn lại:</div>
+  <div class="numbers" id="stock-count">0</div>
+  <div class="status">Tổng doanh thu hiện tại:</div>
+  <div class="numbers" id="total-revenue">0 đ</div>
+  <div class="status" style="margin-top: 12px;">Tổng lợi nhuận hiện tại:</div>
+  <div class="numbers" id="total-profit">0 đ</div>
+  <div class="status" style="margin-top: 12px;">Tổng chi tiêu khác:</div>
+  <div class="numbers" id="total-expenses">0 đ</div>
+  <div class="status" style="margin-top: 12px;">Lợi nhuận ròng (sau chi tiêu):</div>
+  <div class="numbers" id="net-profit">0 đ</div>
+  <div class="small-text">Dữ liệu được lưu trên trình duyệt của bạn.</div>
+</div>
+
+<!-- Modal for sales history -->
+<div id="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-modal-title" tabindex="-1">
+  <div id="history-modal-content">
+    <button class="modal-close-btn" id="history-modal-close" aria-label="Đóng cửa sổ lịch sử bán hàng">&times;</button>
+    <h2 id="history-modal-title">Lịch sử bán hàng theo ngày</h2>
+    <div id="history-list" aria-live="polite">
+      <!-- Daily grouped sales transactions will appear here -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal for expense history -->
+<div id="expense-history-modal" role="dialog" aria-modal="true" aria-labelledby="expense-history-modal-title" tabindex="-1">
+  <div id="expense-history-modal-content">
+    <button class="modal-close-btn" id="expense-history-modal-close" aria-label="Đóng cửa sổ lịch sử chi tiêu">&times;</button>
+    <h2 id="expense-history-modal-title">Lịch sử chi tiêu khác</h2>
+    <div id="expense-history-list" aria-live="polite">
+      <!-- Expense entries here -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Bank Code -->
+<div id="bank-code-modal" role="dialog" aria-modal="true" aria-labelledby="bank-code-modal-title" tabindex="-1">
+  <div id="bank-code-modal-content">
+    <button class="modal-close-btn" id="bank-code-modal-close" aria-label="Đóng cửa sổ mã ngân hàng">&times;</button>
+    <h2 id="bank-code-modal-title">Mã Ngân Hàng</h2>
+    <img id="bank-code-img" src="https://i.imgur.com/YuByekc.jpeg" alt="Mã ngân hàng TanMinh Dev_" />
+  </div>
+</div>
+
+<script>
+  (() => {
+    "use strict";
+
+    const STORAGE_KEY = 'sausage_sales_manager_v7';
+
+    // Elements
+    const priceInput = document.getElementById('price-per-stick');
+    const costInput = document.getElementById('cost-per-stick');
+    const purchaseQuantityInput = document.getElementById('purchase-quantity');
+    const saleQuantityInput = document.getElementById('sale-quantity');
+    const giftQuantityInput = document.getElementById('gift-quantity');
+    const expenseAmountInput = document.getElementById('expense-amount');
+    const expenseDescInput = document.getElementById('expense-desc');
+    const btnPurchase = document.getElementById('btn-purchase');
+    const btnSale = document.getElementById('btn-sale');
+    const btnAddExpense = document.getElementById('btn-add-expense');
+    const stockCountElem = document.getElementById('stock-count');
+    const totalRevenueElem = document.getElementById('total-revenue');
+    const totalProfitElem = document.getElementById('total-profit');
+    const totalExpensesElem = document.getElementById('total-expenses');
+    const netProfitElem = document.getElementById('net-profit');
+    const historyListElem = document.getElementById('history-list');
+    const expenseHistoryListElem = document.getElementById('expense-history-list');
+
+    const historyModal = document.getElementById('history-modal');
+    const historyModalContent = document.getElementById('history-modal-content');
+    const historyModalCloseBtn = document.getElementById('history-modal-close');
+    const openHistoryBtn = document.getElementById('open-history-btn');
+
+    const expenseHistoryModal = document.getElementById('expense-history-modal');
+    const expenseHistoryModalContent = document.getElementById('expense-history-modal-content');
+    const expenseHistoryModalCloseBtn = document.getElementById('expense-history-modal-close');
+    const openExpenseHistoryBtn = document.getElementById('open-expense-history-btn');
+
+    const bankCodeModal = document.getElementById('bank-code-modal');
+    const bankCodeModalContent = document.getElementById('bank-code-modal-content');
+    const bankCodeModalCloseBtn = document.getElementById('bank-code-modal-close');
+    const openBankCodeBtn = document.getElementById('open-bank-code-btn');
+
+    // Data structure:
+    // { pricePerStick, costPerStick, stock, revenue, profit, transactions: [], expenses: [] }
+    // transactions: { type: 'sale' | 'purchase' | 'gift', quantity, timestamp, totalPrice, profit }
+    // expenses: { amount, timestamp, description }
+    let data = {
+      pricePerStick: 2000,
+      costPerStick: 1500,
+      stock: 0,
+      revenue: 0,
+      profit: 0,
+      transactions: [],
+      expenses: []
+    };
+
+    // Load data from localStorage
+    function loadData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if(saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if(typeof parsed.pricePerStick === 'number') data.pricePerStick = parsed.pricePerStick;
+          if(typeof parsed.costPerStick === 'number') data.costPerStick = parsed.costPerStick;
+          if(typeof parsed.stock === 'number') data.stock = parsed.stock;
+          if(typeof parsed.revenue === 'number') data.revenue = parsed.revenue;
+          if(typeof parsed.profit === 'number') data.profit = parsed.profit;
+          if(Array.isArray(parsed.transactions)) data.transactions = parsed.transactions;
+          if(Array.isArray(parsed.expenses)) data.expenses = parsed.expenses;
+        } catch(e) {
+          // ignore parse error
+        }
+      }
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // Format timestamp to human readable date time string
+    function formatTimestamp(ts) {
+      const d = new Date(ts);
+      return d.toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'}) +
+        ' ' +
+        d.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+    }
+
+    // Format timestamp to date string for grouping
+    function formatDate(ts, forId=false) {
+      const d = new Date(ts);
+      if(forId) {
+        return d.toISOString().slice(0,10);
+      }
+      return d.toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'});
+    }
+
+    // Update UI
+    function updateUI() {
+      priceInput.value = data.pricePerStick.toString();
+      costInput.value = data.costPerStick.toString();
+      stockCountElem.textContent = data.stock.toString();
+      totalRevenueElem.textContent = data.revenue.toLocaleString('vi-VN') + ' đ';
+      totalProfitElem.textContent = data.profit.toLocaleString('vi-VN') + ' đ';
+
+      const totalExpenses = data.expenses.reduce((sum, e) => sum + e.amount, 0);
+      totalExpensesElem.textContent = totalExpenses.toLocaleString('vi-VN') + ' đ';
+
+      const netProfit = data.profit - totalExpenses;
+      netProfitElem.textContent = netProfit.toLocaleString('vi-VN') + ' đ';
+
+      renderGroupedSalesHistory();
+      renderExpenseHistory();
+    }
+
+    // Render sales history grouped by day
+    function renderGroupedSalesHistory() {
+      historyListElem.innerHTML = '';
+      const salesAndGifts = data.transactions.filter(t => t.type === 'sale' || t.type === 'gift');
+      if(salesAndGifts.length === 0) {
+        historyListElem.textContent = 'Chưa có giao dịch bán hàng hoặc tặng nào.';
+        return;
+      }
+
+      const grouped = {};
+      for (const trans of salesAndGifts) {
+        const dateStr = formatDate(trans.timestamp);
+        const dateId = formatDate(trans.timestamp, true);
+        if (!grouped[dateStr]) grouped[dateStr] = {id: dateId, transactions: []};
+        grouped[dateStr].transactions.push(trans);
+      }
+
+      const sortedDates = Object.keys(grouped).sort((a,b) => {
+        const da = new Date(a.split('/').reverse().join('-')).getTime();
+        const db = new Date(b.split('/').reverse().join('-')).getTime();
+        return db - da;
+      });
+
+      sortedDates.forEach(date => {
+        const dayGroup = grouped[date];
+        const dayTransactions = dayGroup.transactions;
+
+        const totalQty = dayTransactions.reduce((sum,t) => sum + t.quantity, 0);
+        const totalRevenue = dayTransactions.reduce((sum,t) => sum + (t.type === 'sale' ? t.totalPrice : 0), 0);
+        const totalProfit = dayTransactions.reduce((sum,t) => sum + t.profit, 0);
+
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'daily-group';
+        dayDiv.id = 'day-' + dayGroup.id;
+
+        const header = document.createElement('div');
+        header.className = 'daily-group-header';
+        header.textContent = date;
+        dayDiv.appendChild(header);
+
+        const summary = document.createElement('div');
+        summary.className = 'daily-summary';
+        summary.textContent = `Tổng số: ${totalQty} cây - Doanh thu: ${totalRevenue.toLocaleString('vi-VN')} đ - Lợi nhuận: ${totalProfit.toLocaleString('vi-VN')} đ`;
+        dayDiv.appendChild(summary);
+
+        dayTransactions.forEach(t => {
+          const isSale = t.type === 'sale';
+          const isGift = t.type === 'gift';
+          const time = new Date(t.timestamp).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+          const transDiv = document.createElement('div');
+          transDiv.className = 'daily-transaction';
+          const icon = isSale ? '🛒' : '🎁';
+          transDiv.textContent = `${icon} ${t.quantity} cây - ${isSale ? `Tổng: ${t.totalPrice.toLocaleString('vi-VN')} đ` : 'Tặng không doanh thu'} - Lợi nhuận: ${t.profit.toLocaleString('vi-VN')} đ`;
+
+          const timeSpan = document.createElement('span');
+          timeSpan.className = 'daily-transaction-time';
+          timeSpan.textContent = time;
+          transDiv.appendChild(timeSpan);
+          dayDiv.appendChild(transDiv);
+        });
+
+        historyListElem.appendChild(dayDiv);
+      });
+    }
+
+    // Render expense history
+    function renderExpenseHistory() {
+      expenseHistoryListElem.innerHTML = '';
+      if(data.expenses.length === 0) {
+        expenseHistoryListElem.textContent = 'Chưa có chi tiêu nào.';
+        return;
+      }
+      for(let i = data.expenses.length -1; i >=0; i--) {
+        const e = data.expenses[i];
+        const div = document.createElement('div');
+        div.className = 'expense-entry';
+
+        const amountDiv = document.createElement('div');
+        amountDiv.style.fontWeight = '700';
+        amountDiv.style.color = '#b23c2a';
+        amountDiv.textContent = `- ${e.amount.toLocaleString('vi-VN')} đ`;
+
+        const descDiv = document.createElement('div');
+        descDiv.className = 'expense-meta';
+        descDiv.textContent = `${e.description ? e.description : '(Không mô tả)'} - Thời gian: ${formatTimestamp(e.timestamp)}`;
+
+        div.appendChild(amountDiv);
+        div.appendChild(descDiv);
+
+        expenseHistoryListElem.appendChild(div);
+      }
+    }
+
+    // Validation functions
+    function validatePrice(value) {
+      const n = Number(value);
+      return Number.isInteger(n) && n >= 0;
+    }
+    function validateQuantity(value) {
+      const n = Number(value);
+      return Number.isInteger(n) && n >= 0;
+    }
+    function validateExpenseAmount(value) {
+      const n = Number(value);
+      return Number.isInteger(n) && n > 0;
+    }
+
+    // Price/Cost inputs handler
+    function onPriceChange() {
+      const priceVal = priceInput.value;
+      const costVal = costInput.value;
+
+      if(!validatePrice(priceVal)) {
+        alert('Vui lòng nhập giá bán hợp lệ (số nguyên >= 0).');
+        priceInput.value = data.pricePerStick;
+        return false;
+      }
+      if(!validatePrice(costVal)) {
+        alert('Vui lòng nhập giá vốn hợp lệ (số nguyên >= 0).');
+        costInput.value = data.costPerStick;
+        return false;
+      }
+      if(Number(costVal) > Number(priceVal)) {
+        if(!confirm('Giá vốn > Giá bán. Bạn có chắc không?')) {
+          costInput.value = data.costPerStick;
+          return false;
+        }
+      }
+      data.pricePerStick = Number(priceVal);
+      data.costPerStick = Number(costVal);
+      saveData();
+      updateUI();
+      return true;
+    }
+
+    priceInput.addEventListener('change', onPriceChange);
+    costInput.addEventListener('change', onPriceChange);
+
+    // Purchase button
+    btnPurchase.addEventListener('click', () => {
+      let val = purchaseQuantityInput.value;
+      if(!validateQuantity(val) || val === "0") {
+        alert('Vui lòng nhập số lượng nhập hàng hợp lệ (> 0).');
+        purchaseQuantityInput.focus();
+        return;
+      }
+      const qty = Number(val);
+      const totalCost = qty * data.costPerStick;
+
+      data.stock += qty;
+      data.transactions.push({
+        type: 'purchase',
+        quantity: qty,
+        timestamp: Date.now(),
+        totalPrice: totalCost,
+        profit: 0
+      });
+      saveData();
+      updateUI();
+      purchaseQuantityInput.value = '';
+      purchaseQuantityInput.focus();
+    });
+
+    // Sale button (including gift)
+    btnSale.addEventListener('click', () => {
+      let saleVal = saleQuantityInput.value;
+      let giftVal = giftQuantityInput.value;
+      if (!validateQuantity(saleVal)) {
+        alert('Vui lòng nhập số lượng bán hàng hợp lệ (>= 0).');
+        saleQuantityInput.focus();
+        return;
+      }
+      if (!validateQuantity(giftVal)) {
+        alert('Vui lòng nhập số lượng tặng hợp lệ (>= 0).');
+        giftQuantityInput.focus();
+        return;
+      }
+      const saleQty = Number(saleVal);
+      const giftQty = Number(giftVal);
+      if(saleQty === 0 && giftQty === 0) {
+        alert('Vui lòng nhập số lượng bán hoặc tặng lớn hơn 0.');
+        saleQuantityInput.focus();
+        return;
+      }
+      const totalQty = saleQty + giftQty;
+      if(totalQty > data.stock) {
+        alert('Không đủ xúc xích trong kho để bán hoặc tặng. Vui lòng kiểm tra lại.');
+        if (saleQty > 0) saleQuantityInput.focus();
+        else giftQuantityInput.focus();
+        return;
+      }
+
+      const now = Date.now();
+
+      // Process sale
+      if(saleQty > 0) {
+        const totalSale = saleQty * data.pricePerStick;
+        const totalCost = saleQty * data.costPerStick;
+        const profit = totalSale - totalCost;
+
+        data.stock -= saleQty;
+        data.revenue += totalSale;
+        data.profit += profit;
+        data.transactions.push({
+          type: 'sale',
+          quantity: saleQty,
+          timestamp: now,
+          totalPrice: totalSale,
+          profit: profit
+        });
+      }
+
+      // Process gift
+      if(giftQty > 0) {
+        const totalCost = giftQty * data.costPerStick;
+        const profit = -totalCost; // The cost is a loss since no revenue
+
+        data.stock -= giftQty;
+        data.profit += profit;
+        data.transactions.push({
+          type: 'gift',
+          quantity: giftQty,
+          timestamp: now,
+          totalPrice: 0,
+          profit: profit
+        });
+      }
+
+      saveData();
+      updateUI();
+      saleQuantityInput.value = '';
+      giftQuantityInput.value = '';
+      saleQuantityInput.focus();
+    });
+
+    // Add expense button
+    btnAddExpense.addEventListener('click', () => {
+      let val = expenseAmountInput.value;
+      if(!validateExpenseAmount(val)) {
+        alert('Vui lòng nhập số tiền chi tiêu hợp lệ (> 0).');
+        expenseAmountInput.focus();
+        return;
+      }
+      const amount = Number(val);
+      let desc = expenseDescInput.value.trim();
+
+      data.expenses.push({
+        amount: amount,
+        description: desc,
+        timestamp: Date.now()
+      });
+      saveData();
+      updateUI();
+      expenseAmountInput.value = '';
+      expenseDescInput.value = '';
+      expenseAmountInput.focus();
+    });
+
+    // Modal utilities
+    function openModal(modal, openBtn) {
+      modal.style.display = 'block';
+      modal.setAttribute('aria-hidden', 'false');
+      openBtn.setAttribute('aria-expanded', 'true');
+      const closeBtn = modal.querySelector('.modal-close-btn');
+      closeBtn.focus();
+    }
+    function closeModal(modal, openBtn) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      openBtn.setAttribute('aria-expanded', 'false');
+      openBtn.focus();
+    }
+
+    // Open/Close sales history modal
+    openHistoryBtn.addEventListener('click', () => {
+      openModal(historyModal, openHistoryBtn);
+    });
+    historyModalCloseBtn.addEventListener('click', () => {
+      closeModal(historyModal, openHistoryBtn);
+    });
+
+    // Open/Close expense history modal
+    openExpenseHistoryBtn.addEventListener('click', () => {
+      openModal(expenseHistoryModal, openExpenseHistoryBtn);
+    });
+    expenseHistoryModalCloseBtn.addEventListener('click', () => {
+      closeModal(expenseHistoryModal, openExpenseHistoryBtn);
+    });
+
+    // Open/Close bank code modal
+    openBankCodeBtn.addEventListener('click', () => {
+      openModal(bankCodeModal, openBankCodeBtn);
+    });
+    bankCodeModalCloseBtn.addEventListener('click', () => {
+      closeModal(bankCodeModal, openBankCodeBtn);
+    });
+
+    // Close modals on click outside content
+    window.addEventListener('click', (event) => {
+      if(event.target === historyModal) {
+        closeModal(historyModal, openHistoryBtn);
+      }
+      else if(event.target === expenseHistoryModal) {
+        closeModal(expenseHistoryModal, openExpenseHistoryBtn);
+      }
+      else if(event.target === bankCodeModal) {
+        closeModal(bankCodeModal, openBankCodeBtn);
+      }
+    });
+
+    // Close modals on ESC key press
+    window.addEventListener('keydown', (event) => {
+      if(event.key === "Escape") {
+        if(historyModal.style.display === 'block') closeModal(historyModal, openHistoryBtn);
+        if(expenseHistoryModal.style.display === 'block') closeModal(expenseHistoryModal, openExpenseHistoryBtn);
+        if(bankCodeModal.style.display === 'block') closeModal(bankCodeModal, openBankCodeBtn);
+      }
+    });
+
+    // Initialize app
+    function init() {
+      loadData();
+      updateUI();
+    }
+
+    init();
+
+  })();
+</script>
+</body>
+</html>
 
